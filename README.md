@@ -1,14 +1,14 @@
 <h1 align="center"> dlist </h1> <br>
 <p align="center">
-    <img src="./assets/images/steam-roller.jpg">
+    <img src="./assets/images/acyclic01.png">
 </p>
 
 <p align="center">
-  Resolve and list all dependencies for a give CPAN perl distribution. Built with Go.
+  Resolve and list all of the runtime required dependencies for a give CPAN perl distribution. Built with Go.
 </p>
 
 <p align="center">
-    <img src="./assets/images/acyclic01.png" height="100" width="100">
+    <img src="./assets/images/go-logo.png" height="100" width="100">
 </p>
 
 ## Table of Contents
