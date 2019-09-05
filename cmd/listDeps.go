@@ -17,6 +17,8 @@ package cmd
 import (
 	"log"
 
+	"github.com/bburch01/dlist/internal/app/dlist"
+
 	"github.com/spf13/cobra"
 )
 
@@ -32,38 +34,25 @@ func init() {
 	// is called directly, e.g.:
 	// checkServiceAlivenessCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
-	rootCmd.AddCommand(listDependenciesCmd)
+	rootCmd.AddCommand(listDepsCmd)
 
-	listDependenciesCmd.Flags().StringP("name", "n", "", "list all dependencies for the given distro name")
+	listDepsCmd.Flags().StringP("name", "n", "", "list dependencies for the given distro name")
 }
 
-var listDependenciesCmd = &cobra.Command{
-	Use:   "listDependencies",
-	Short: "List all dependencies for a given distro name.",
+var listDepsCmd = &cobra.Command{
+	Use:   "listDeps",
+	Short: "List dependencies for a given distro name.",
 	Long:  `Lists all runtime required dependencies for a give CPAN perl distribution name.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		log.Println("stub: list dependencies here....")
 
-		/*
-			chkall, _ := cmd.Flags().GetBool("all")
-			if chkall {
-				checkAll()
-			} else {
-				svcname, _ := cmd.Flags().GetString("name")
-				if svcname == "" {
-					checkAll()
-				} else {
-					resp, err := checkByName(svcname)
-					if err != nil {
-						log.Printf("%v service health check call failed with error: %v", svcname, err)
-					} else {
-						log.Printf("%v service health check response code   : %v", svcname, resp.Details.Code)
-						log.Printf("%v service health check response message: %s", svcname, resp.Details.Message)
-					}
-				}
-			}
-		*/
+		log.Printf("MDM.BHooksEndOfScope:  %v", dlist.MDM.BHooksEndOfScope)
+		log.Printf("CoreModulesMap[CPAN::Complete]: %v", dlist.CoreModulesMap["CPAN::Complete"])
+
+		//fmt.Println(result["users"])
+
+		log.Printf("Result[author]: %v", dlist.Result["author"])
 
 		return nil
 	},
