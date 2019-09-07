@@ -61,25 +61,53 @@ var listDepsCmd = &cobra.Command{
 			}
 		*/
 
-		for k, v := range dlist.DistroMetaDataMap {
+		/*
+			for k, v := range dlist.DistroMetaDataMap {
 
-			switch k {
-			case "DateTime":
-				//var r = make(map[string]interface{})
-				r := v["prereqs"].(map[string]interface{})
-				s := r["runtime"].(map[string]interface{})
-				t := s["requires"].(map[string]interface{})
-				//log.Printf("DateTime author: %v", v["prereqs"])
-				//log.Printf("DateTime prereqs configure requires: %v", s["requires"])
-				//log.Printf("DateTime prereqs configure requires: %v", t)
+				switch k {
+				case "DateTime":
+					//var r = make(map[string]interface{})
+					r := v["prereqs"].(map[string]interface{})
+					s := r["runtime"].(map[string]interface{})
+					t := s["requires"].(map[string]interface{})
+					//log.Printf("DateTime author: %v", v["prereqs"])
+					//log.Printf("DateTime prereqs configure requires: %v", s["requires"])
+					//log.Printf("DateTime prereqs configure requires: %v", t)
 
-				for k, _ := range t {
-					log.Printf("required module: %v", k)
+					for k, _ := range t {
+						log.Printf("required module: %v", k)
+					}
+
+				default:
 				}
 
-			default:
+			}
+		*/
+
+		/*
+			for k, v := range dlist.DistroDependenciesMap {
+				switch k {
+				case "DateTime":
+					for d := range v {
+						//log.Printf("required module: %v", d)
+					}
+				default:
+				}
+			}
+		*/
+
+		//log.Printf("junk: %v", dlist.Junk)
+
+		distroName, _ := cmd.Flags().GetString("name")
+
+		if deps, err := dlist.GetDepList(distroName); err == nil {
+
+			for _, v := range deps {
+				log.Printf("required module: %v", v)
 			}
 
+		} else {
+			log.Printf("err: %v", err)
 		}
 
 		return nil

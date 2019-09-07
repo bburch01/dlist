@@ -4,76 +4,139 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
 
-var DistroMetaDataFilepathMap = make(map[string]string)
+// Map of distro name to dependent module list
+var distroDependencyMap = make(map[string][]string)
 
-var DistroMetaDataMap = make(map[string]map[string]interface{})
+// Map of module name to distro
+var moduleDistroMap = make(map[string]interface{})
 
-func init() {
+func GetDepList(distro string) (map[string]string, error) {
 
-	//distroMetaDataFilepathMap := make(map[string]string)
+	if err := initModuleDistroMap(); err != nil {
+		return nil, err
+	}
+
+	if err := initDistroDependencyMap(); err != nil {
+		panic(err)
+	}
+	if _, ok := distroDependencyMap[distro]; !ok {
+		return nil, fmt.Errorf("%v is an invalid CPAN perl distribution name", distro)
+	}
+
+	depDistros := make(map[string]string)
+
+	if err := resolveDependencies(distro, depDistros); err != nil {
+		return nil, fmt.Errorf("dependency resolution failed with error: %v", err)
+	}
+
+	return depDistros, nil
+
+}
+
+func initDistroDependencyMap() error {
 
 	err := filepath.Walk("data", func(path string, info os.FileInfo, err error) error {
-
 		if info.IsDir() {
-
 			if info.Name() != "data" {
 
-				DistroMetaDataFilepathMap[info.Name()] = filepath.Join("data", info.Name(), "META.json")
+				var distroMetaData map[string]interface{}
+
+				jsonFile, err := os.Open(filepath.Join("data", info.Name(), "META.json"))
+
+				if err != nil {
+					return err
+				}
+
+				defer jsonFile.Close()
+
+				jsonBytes, err := ioutil.ReadAll(jsonFile)
+				if err != nil {
+					return err
+
+				}
+
+				if err := json.Unmarshal(jsonBytes, &distroMetaData); err != nil {
+					return err
+				}
+
+				distroDependencyMap[info.Name()] = extractDistroDeps(info.Name(), distroMetaData)
 
 			}
-
 		}
 
-		//files = append(files, path)
 		return nil
 	})
 
-	// TODO: add a proper error handler
+	return err
+}
+
+func initModuleDistroMap() error {
+
+	jsonFile, err := os.Open("data/module-distro-map.json")
+
 	if err != nil {
-		fmt.Println(err)
-	}
-
-	//DistroMetaDataMap = make(map[string]interface{})
-
-	for k, v := range DistroMetaDataFilepathMap {
-
-		var result map[string]interface{}
-
-		//fmt.Printf("\nfilepath to open: %v", v)
-
-		jsonFile, err := os.Open(v)
-
-		// TODO: add proper error handler
-		if err != nil {
-			fmt.Println(err)
-		}
-
-		defer jsonFile.Close()
-
-		byteValue, _ := ioutil.ReadAll(jsonFile)
-
-		json.Unmarshal([]byte(byteValue), &result)
-
-		DistroMetaDataMap[k] = result
+		return err
 
 	}
 
-	/*
-		jsonFile, err := os.Open("data/DateTime/META.json")
+	defer jsonFile.Close()
 
-		if err != nil {
-			fmt.Println(err)
+	jsonBytes, err := ioutil.ReadAll(jsonFile)
+	if err != nil {
+		return err
+
+	}
+
+	if err := json.Unmarshal(jsonBytes, &moduleDistroMap); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func extractDistroDeps(distro string, data map[string]interface{}) (deps []string) {
+
+	var requires map[string]interface{}
+
+	if _, ok := data["prereqs"]; ok {
+		prereqs := data["prereqs"].(map[string]interface{})
+		if _, ok := prereqs["runtime"]; ok {
+			runtime := prereqs["runtime"].(map[string]interface{})
+			if _, ok := runtime["requires"]; ok {
+				requires = runtime["requires"].(map[string]interface{})
+			}
 		}
+	}
 
-		defer jsonFile.Close()
+	for k := range requires {
+		if k != "perl" {
+			if _, ok := CoreModulesMap[k]; !ok {
+				deps = append(deps, k)
+			}
+		}
+	}
 
-		byteValue, _ := ioutil.ReadAll(jsonFile)
+	return
+}
 
-		json.Unmarshal([]byte(byteValue), &Result)
+func resolveDependencies(distro string, depDistros map[string]string) error {
 
-	*/
+	if _, ok := depDistros[distro]; !ok {
+		depDistros[distro] = distro
+	}
+
+	for _, v := range distroDependencyMap[distro] {
+
+		log.Printf("resoving dependencies for distro: %v", distro)
+
+		resolveDependencies(moduleDistroMap[v].(string), depDistros)
+
+	}
+
+	return nil
 }

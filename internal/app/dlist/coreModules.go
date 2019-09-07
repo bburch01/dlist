@@ -7,10 +7,10 @@ import (
 	"os"
 )
 
-// coreModulesList is an array of names of all of the modules shipped with the perl core.
+// coreModulesList is an array containing the names of all of the modules shipped with the perl core.
 var coreModulesList []string
 
-// CoreModulesMap is a conversion of coreModulesList. It provides client code with fast look-ups to check
+// CoreModulesMap is a conversion of coreModulesList array to a map. It provides client code with fast look-ups to check
 // for set membership.
 var CoreModulesMap map[string]string
 
