@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -131,11 +130,7 @@ func resolveDependencies(distro string, depDistros map[string]string) error {
 	}
 
 	for _, v := range distroDependencyMap[distro] {
-
-		log.Printf("resoving dependencies for distro: %v", distro)
-
 		resolveDependencies(moduleDistroMap[v].(string), depDistros)
-
 	}
 
 	return nil
