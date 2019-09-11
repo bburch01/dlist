@@ -35,7 +35,7 @@ func init() {
 
 	rootCmd.AddCommand(listDepsCmd)
 
-	listDepsCmd.Flags().StringP("name", "n", "", "list dependencies for the given distro name")
+	listDepsCmd.Flags().StringSliceP("name", "n", nil, "list dependencies for the given distro name")
 }
 
 var listDepsCmd = &cobra.Command{
@@ -43,73 +43,12 @@ var listDepsCmd = &cobra.Command{
 	Short: "List dependencies for a given distro name.",
 	Long:  `Lists all runtime required dependencies for a give CPAN perl distribution name.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-
-		//log.Println("stub: list dependencies here....")
-
-		//log.Printf("MDM.BHooksEndOfScope:  %v", dlist.MDM.BHooksEndOfScope)
-		//log.Printf("CoreModulesMap[CPAN::Complete]: %v", dlist.CoreModulesMap["CPAN::Complete"])
-
-		//fmt.Println(result["users"])
-
-		//log.Printf("Result[author]: %v", dlist.Result["author"])
-
-		/*
-			log.Printf("metadata file count: %v", len(dlist.DistroMetaDataFilepathMap))
-
-			for k, v := range dlist.DistroMetaDataFilepathMap {
-				log.Printf("k: %v v: %v", k, v)
-			}
-		*/
-
-		/*
-			for k, v := range dlist.DistroMetaDataMap {
-
-				switch k {
-				case "DateTime":
-					//var r = make(map[string]interface{})
-					r := v["prereqs"].(map[string]interface{})
-					s := r["runtime"].(map[string]interface{})
-					t := s["requires"].(map[string]interface{})
-					//log.Printf("DateTime author: %v", v["prereqs"])
-					//log.Printf("DateTime prereqs configure requires: %v", s["requires"])
-					//log.Printf("DateTime prereqs configure requires: %v", t)
-
-					for k, _ := range t {
-						log.Printf("required module: %v", k)
-					}
-
-				default:
-				}
-
-			}
-		*/
-
-		/*
-			for k, v := range dlist.DistroDependenciesMap {
-				switch k {
-				case "DateTime":
-					for d := range v {
-						//log.Printf("required module: %v", d)
-					}
-				default:
-				}
-			}
-		*/
-
-		//log.Printf("junk: %v", dlist.Junk)
-
-		distroName, _ := cmd.Flags().GetString("name")
-
-		if deps, err := dlist.GetDepList(distroName); err == nil {
-
-			for _, v := range deps {
-				log.Printf("required module: %v", v)
-			}
-
+		distroList, _ := cmd.Flags().GetStringSlice("name")
+		if json, err := dlist.GetDepList(distroList); err == nil {
+			log.Print(json)
 		} else {
 			log.Printf("err: %v", err)
 		}
-
 		return nil
 	},
 }

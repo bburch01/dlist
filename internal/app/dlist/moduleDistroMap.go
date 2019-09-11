@@ -4,26 +4,25 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
-// MDM is an instance of ModuleDistroMap that has been populated with values from the data/module-distro-map.json file.
 var MDM ModuleDistroMap
 
 func init() {
-
-	jsonFile, err := os.Open("data/module-distro-map.json")
-
+	if err := godotenv.Load(); err != nil {
+		log.Panicf("failed to load environment variables with error: %v", err)
+	}
+	jsonFile, err := os.Open(os.Getenv("DATA_DIR") + "/module-distro-map.json")
 	if err != nil {
 		fmt.Println(err)
 	}
-
 	defer jsonFile.Close()
-
 	byteValue, _ := ioutil.ReadAll(jsonFile)
-
 	json.Unmarshal(byteValue, &MDM)
-
 }
 
 type ModuleDistroMap struct {
