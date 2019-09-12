@@ -17,7 +17,7 @@
 - [About](#about)
 - [Installation](#installation)
 - [Usage](#usage)
-- [UnitTest](#unittest)
+- [UnitTests](#unit tests)
 - [Deficiencies](#deficiencies)
 
 ## Author
