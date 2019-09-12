@@ -39,15 +39,18 @@ www.linkedin.com/in/barry-burch-digital-native<br>
 
 ## About
 
-dlist was created to be submitted to ActiveState as the coding exercise portion of the interview process for a position as a software engineer.
+dlist was created to be submitted to ActiveState as the coding exercise portion of the interview process
+ for a position as a software engineer.
 
 ## Installation
 
-dlist is written in Go. To run it (on macOS or Linux) you will need:
+dlist is written in Go. To run it (on macOS or Linux) you will need to:
 
     1. Install Go 1.12 or later on your system.
 
-    2. Unzip the project zip file into a <working dir> on your system.
+    2. Un-tar the submitted dlist tarball (dlist.tar.gz) into a <working dir> on your system ('tar xfvz dlist.tar.gz').
+
+    3. Change directory to <working dir>/dlist
 
     3. Edit <working dir>/dlist/.env and update the path to the dlist/data directory.
 
@@ -64,13 +67,15 @@ dlist deviates from the ActiveState requirements in that specifying '--name' mul
 
     1. Complete the Installation section of this document.
 
-    2. Change directory to <working dir>/dlist .
+    2. Change directory to <working dir>/dlist 
 
-    3. See usage for dlist: 'dlist' or 'dlist --help' or just 'dlist' .
+    3. See usage for dlist: 'dlist' or 'dlist --help' 
 
-    4. To run dlist for 1 CPAN perl distro name: 'dlist listDeps --name <distro name>' ( e.g. 'dlist listDeps --name Class-Load' ).
+    4. To run dlist for 1 CPAN perl distro name: 'dlist listDeps --name <distro name>' ( e.g.
+     'dlist listDeps --name Class-Load' ).
 
-    5. To run dlist for multiple CPAN perl distro names: 'dlist listDeps --name <distro name>,<distro name>,...<distro name>' (e.g. 'dlist listDeps --name Class-Load,B-Hooks-EndOfScope' ).
+    5. To run dlist for multiple CPAN perl distro names: 'dlist listDeps --name <distro name>,<distro name>,...<distro name>'
+     (e.g. 'dlist listDeps --name Class-Load,B-Hooks-EndOfScope' ).
 
 ## UnitTest
 
@@ -82,15 +87,18 @@ dlist deviates from the ActiveState requirements in that specifying '--name' mul
 
 ## Deficiencies
 
-    1. The dlist UI does not meet the ActiveState UI requirements.
+    1. The dlist UI does not meet the ActiveState UI requirements (see the Usage section for details).
 
-    2. When dlist is run specifying multiple distro names, the output is valid JSON but the alignment of the top-leve objects does not look right.
+    2. When dlist is run specifying multiple distro names, the output is valid JSON but the whitespace alignment
+     of the top-level objects does not look right.
 
     3. The dlist output does not meet the ActiveState requirements:
 
-        a. The specified distro name(s) is/are included as objects in the JSON output.
+        a. The specified distro names are included as top-level objects in the JSON output.
 
-        b. When the specified distro name(s) has/have no dependencies, instead of an empty block, the distro name(s) are inserted into the JSON with empty values.
+        b. When the specified distro names have no dependencies, instead of an empty JSON block, the distro 
+         names are inserted into the JSON as top-level objects with empty values.
+
 
 
 
