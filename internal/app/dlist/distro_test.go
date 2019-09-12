@@ -88,7 +88,7 @@ func TestGetDepListForSingleDistro(t *testing.T) {
 		t.FailNow()
 	}
 	moduleImplementation = packageStash["Module-Implementation"].(map[string]interface{})
-	
+
 	if _, ok := moduleImplementation["Module-Runtime"]; !ok {
 		t.Error("Class-Load[Package-Stash[Module-Implementation[Module-Runtime]]] not found.")
 		t.FailNow()
