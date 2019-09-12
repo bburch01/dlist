@@ -17,7 +17,7 @@
 - [About](#about)
 - [Installation](#installation)
 - [Usage](#usage)
-- [UnitTests](#unit tests)
+- [UnitTest](#unittest)
 - [Deficiencies](#deficiencies)
 
 ## Author
@@ -72,13 +72,25 @@ dlist deviates from the ActiveState requirements in that specifying '--name' mul
 
     5. To run dlist for multiple CPAN perl distro names: 'dlist listDeps --name <distro name>,<distro name>,...<distro name>' (e.g. 'dlist listDeps --name Class-Load,B-Hooks-EndOfScope' ).
 
-## Unit Tests
+## UnitTest
 
     1. Complete the Installation section of this document.
 
     2. Change directory to <working dir>/dlist/internal/app/dlist
 
     3. Run the unit test(s) with 'go test -v'
+
+## Deficiencies
+
+    1. The dlist UI does not meet the ActiveState UI requirements.
+
+    2. When dlist is run specifying multiple distro names, the output is valid JSON but the alignment of the top-leve objects does not look right.
+
+    3. The dlist output does not meet the ActiveState requirements:
+
+        a. The specified distro name(s) is/are included as objects in the JSON output.
+
+        b. When the specified distro name(s) has/have no dependencies, instead of an empty block, the distro name(s) are inserted into the JSON with empty values.
 
 
 
