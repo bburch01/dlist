@@ -17,8 +17,8 @@
 - [About](#about)
 - [Installation](#installation)
 - [Usage](#usage)
-- [UnitTest](#unit tests)
-- [Performace](#performance)
+- [UnitTest](#unittest)
+- [Deficiencies](#deficiencies)
 
 ## Author
 Barry T. Burch<br>
