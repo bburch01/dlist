@@ -2,7 +2,6 @@ package dlist
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
@@ -13,15 +12,19 @@ import (
 var MDM ModuleDistroMap
 
 func init() {
+
 	if err := godotenv.Load(); err != nil {
 		log.Panicf("failed to load environment variables with error: %v", err)
 	}
+
 	jsonFile, err := os.Open(os.Getenv("DATA_DIR") + "/module-distro-map.json")
 	if err != nil {
-		fmt.Println(err)
+		log.Panicf("failed to load module-distro-map.json with error: %v", err)
 	}
 	defer jsonFile.Close()
+
 	byteValue, _ := ioutil.ReadAll(jsonFile)
+
 	json.Unmarshal(byteValue, &MDM)
 }
 

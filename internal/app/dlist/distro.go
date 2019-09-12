@@ -22,14 +22,19 @@ func init() {
 }
 
 func GetDepList(distroList []string) (string, error) {
+
 	var sb strings.Builder
+
 	if err := initModuleDistroMap(); err != nil {
 		return sb.String(), err
 	}
+
 	if err := initDistroDependencyMap(); err != nil {
 		panic(err)
 	}
+
 	sb.WriteString("\n{\n")
+
 	for _, v := range distroList {
 		if _, ok := distroDependencyMap[v]; !ok {
 			return sb.String(), fmt.Errorf("%v is an invalid CPAN perl distribution name", v)
@@ -45,58 +50,75 @@ func GetDepList(distroList []string) (string, error) {
 			}
 		}
 	}
+
 	sb.WriteString("\n}")
+
 	jsonBytes := []byte(sb.String())
+
 	scrubInvalidTrailingCommas(jsonBytes)
+
 	return string(jsonBytes), nil
 }
 
 func initDistroDependencyMap() error {
+
 	err := filepath.Walk(os.Getenv("DATA_DIR"), func(path string, info os.FileInfo, err error) error {
 		if info.IsDir() {
 			if info.Name() != "data" {
+
 				var distroMetaData map[string]interface{}
+
 				jsonFile, err := os.Open(os.Getenv("DATA_DIR") + "/" + info.Name() + "/META.json")
 				if err != nil {
 					return err
-				}
+				}				
 				defer jsonFile.Close()
+
 				jsonBytes, err := ioutil.ReadAll(jsonFile)
 				if err != nil {
 					return err
 
 				}
+
 				if err := json.Unmarshal(jsonBytes, &distroMetaData); err != nil {
 					return err
 				}
+
 				distroDependencyMap[info.Name()] = extractDistroDeps(info.Name(), distroMetaData)
 			}
 		}
 		return nil
 	})
+
 	return err
 }
 
 func initModuleDistroMap() error {
+
 	jsonFile, err := os.Open(os.Getenv("DATA_DIR") + "/module-distro-map.json")
 	if err != nil {
 		return err
 
 	}
 	defer jsonFile.Close()
+
 	jsonBytes, err := ioutil.ReadAll(jsonFile)
 	if err != nil {
 		return err
 
 	}
+
 	if err := json.Unmarshal(jsonBytes, &moduleDistroMap); err != nil {
 		return err
 	}
+
 	return nil
 }
 
 func extractDistroDeps(distro string, data map[string]interface{}) (deps []string) {
+
 	var requires map[string]interface{}
+
 	if _, ok := data["prereqs"]; ok {
 		prereqs := data["prereqs"].(map[string]interface{})
 		if _, ok := prereqs["runtime"]; ok {
@@ -106,6 +128,7 @@ func extractDistroDeps(distro string, data map[string]interface{}) (deps []strin
 			}
 		}
 	}
+
 	for k := range requires {
 		if k != "perl" {
 			if _, ok := CoreModulesMap[k]; !ok {
@@ -113,18 +136,24 @@ func extractDistroDeps(distro string, data map[string]interface{}) (deps []strin
 			}
 		}
 	}
+
 	return
 }
 
 func resolveDependencies(distro string, level int, sb *strings.Builder) error {
+
 	level++
+
 	for i, v := range distroDependencyMap[distro] {
 		sb.WriteString("\n")
+
 		for t := 0; t < level+1; t++ {
 			sb.WriteString("\t")
 		}
+
 		sb.WriteString("\"")
 		sb.WriteString(moduleDistroMap[v].(string))
+
 		if len(distroDependencyMap[moduleDistroMap[v].(string)]) > 0 {
 			sb.WriteString("\": {")
 		} else {
@@ -133,8 +162,10 @@ func resolveDependencies(distro string, level int, sb *strings.Builder) error {
 				sb.WriteString(",")
 			}
 		}
+		
 		resolveDependencies(moduleDistroMap[v].(string), level, sb)
 	}
+
 	if len(distroDependencyMap[distro]) > 0 {
 		sb.WriteString("\n")
 		for t := 0; t < level; t++ {
@@ -142,13 +173,16 @@ func resolveDependencies(distro string, level int, sb *strings.Builder) error {
 		}
 		sb.WriteString("},")
 	}
+
 	return nil
 }
 
 func scrubInvalidTrailingCommas(strBytes []byte) {
+
 	prevCloseBraceExists := false
 	prevCloseBraceIndex := 0
 	patternMatched := false
+
 	for i, v := range strBytes {
 		if v == '}' {
 			if prevCloseBraceExists {

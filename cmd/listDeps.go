@@ -43,12 +43,15 @@ var listDepsCmd = &cobra.Command{
 	Short: "List dependencies for a given distro name.",
 	Long:  `Lists all runtime required dependencies for a give CPAN perl distribution name.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
+
 		distroList, _ := cmd.Flags().GetStringSlice("name")
+
 		if json, err := dlist.GetDepList(distroList); err == nil {
 			log.Print(json)
 		} else {
 			log.Printf("err: %v", err)
 		}
+
 		return nil
 	},
 }
